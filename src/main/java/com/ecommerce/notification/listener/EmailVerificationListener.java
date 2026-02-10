@@ -18,14 +18,16 @@ public class EmailVerificationListener {
 
     @KafkaListener(topics = "emailVerificationTopic", groupId = "notificationId")
     public void handleEmailVerification(String message) {
-        // Message format: email,token,username
+        // Message format: email,token,username,role
         String[] parts = message.split(",");
-        if (parts.length >= 3) {
+        if (parts.length >= 4) {
             String email = parts[0];
             String token = parts[1];
             String username = parts[2];
+            String role = parts[3];
 
-            String verificationLink = "http://localhost:8080/api/auth/verify?token=" + token;
+            String verificationLink = "http://localhost:3000/verify-email?token=" + token + "&email=" + email
+                    + "&usertype=" + role;
 
             log.info("==================================================");
             log.info("EMAIL VERIFICATION REQUEST");

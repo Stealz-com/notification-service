@@ -13,12 +13,8 @@ public class NotificationConsumer {
 
     private final EmailService emailService;
 
-    @KafkaListener(topics = "notificationTopic")
-    public void handleOrderNotification(String orderNumber) {
-        log.info("Received Notification for Order - {}", orderNumber);
-        // For demo purposes, sending to a default email or we could fetch user email from Order Service
-        emailService.sendOrderConfirmationEmail("user@example.com", orderNumber);
-    }
+    // Removed handleOrderNotification to avoid conflict with NotificationListener
+    // which handles the detailed OrderPlacedEvent.
 
     @KafkaListener(topics = "userRegistrationTopic")
     public void handleRegistration(String message) {
@@ -35,7 +31,8 @@ public class NotificationConsumer {
         try {
             // Very basic string manipulation to extract value from "key": "value"
             int keyIndex = json.indexOf("\"" + key + "\":");
-            if (keyIndex == -1) return null;
+            if (keyIndex == -1)
+                return null;
             int valueStart = json.indexOf("\"", keyIndex + key.length() + 3) + 1;
             int valueEnd = json.indexOf("\"", valueStart);
             return json.substring(valueStart, valueEnd);

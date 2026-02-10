@@ -25,11 +25,16 @@ public class EmailService {
         sendEmail(to, "Welcome to Ecommerce", htmlContent);
     }
 
-    public void sendOrderConfirmationEmail(String to, String orderNumber) {
+    public void sendOrderConfirmationEmail(com.ecommerce.notification.dto.OrderPlacedEvent event) {
         Context context = new Context();
-        context.setVariable("orderNumber", orderNumber);
+        context.setVariable("orderNumber", event.getOrderNumber());
+        context.setVariable("totalAmount", event.getTotalAmount());
+        context.setVariable("firstName", event.getFirstName());
+        context.setVariable("shippingAddress", event.getShippingAddress());
+        context.setVariable("items", event.getItems());
+
         String htmlContent = templateEngine.process("order-email", context);
-        sendEmail(to, "Order Confirmation", htmlContent);
+        sendEmail(event.getEmail(), "Order Confirmation - " + event.getOrderNumber(), htmlContent);
     }
 
     private void sendEmail(String to, String subject, String htmlContent) {
