@@ -3,6 +3,7 @@ package com.ecommerce.notification.listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,6 +17,9 @@ public class EmailVerificationListener {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${frontend.url:http://localhost:3000}")
+    private String frontendUrl;
+
     @KafkaListener(topics = "emailVerificationTopic", groupId = "notificationId")
     public void handleEmailVerification(String message) {
         // Message format: email,token,username,role
@@ -26,7 +30,7 @@ public class EmailVerificationListener {
             String username = parts[2];
             String role = parts[3];
 
-            String verificationLink = "http://localhost:3000/verify-email?token=" + token + "&email=" + email
+            String verificationLink = frontendUrl + "/verify-email?token=" + token + "&email=" + email
                     + "&usertype=" + role;
 
             log.info("==================================================");
